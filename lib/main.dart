@@ -14,18 +14,20 @@ import 'package:wakelock/wakelock.dart';
 
 import 'core/di/injection_container.dart';
 import 'core/theme/app_theme.dart';
-import 'presentation/bloc/drowsiness/drowsiness_bloc.dart';
-import 'presentation/bloc/settings/settings_bloc.dart';
-import 'presentation/pages/home_page.dart';
+import 'data/services/alert_service.dart';
+import 'domain/usecases/analyze_frame_usecase.dart';
+import 'presentation/bloc/drowsiness_detection/drowsiness_detection_bloc.dart';
+import 'presentation/screens/home_screen.dart';
+import 'presentation/screens/settings_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  // Initialize dependency injection
-  await configureDependencies();
-  
   // Initialize Hive for local storage
   await Hive.initFlutter();
+  
+  // Initialize dependency injection
+  await configureDependencies();
   
   // Lock to portrait mode for consistent camera feed
   await SystemChrome.setPreferredOrientations([
@@ -56,22 +58,22 @@ class WakeOnApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider<DrowsinessBloc>(
-          create: (_) => getIt<DrowsinessBloc>(),
-        ),
-        BlocProvider<SettingsBloc>(
-          create: (_) => getIt<SettingsBloc>()..add(LoadSettingsEvent()),
+        BlocProvider<DrowsinessDetectionBloc>(
+          create: (_) => DrowsinessDetectionBloc(
+            analyzeFrameUseCase: getIt<AnalyzeFrameUseCase>(),
+            alertService: getIt<AlertService>(),
+          ),
         ),
       ],
-      child: BlocBuilder<SettingsBloc, SettingsState>(
-        builder: (context, state) {
-          return MaterialApp(
-            title: 'WakeOn - Driver Safety',
-            debugShowCheckedModeBanner: false,
-            theme: AppTheme.darkTheme, // Always dark for driver safety
-            themeMode: ThemeMode.dark,
-            home: const HomePage(),
-          );
+      child: MaterialApp(
+        title: 'WakeOn - Driver Safety',
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.darkTheme,
+        themeMode: ThemeMode.dark,
+        initialRoute: '/',
+        routes: {
+          '/': (context) => const HomeScreen(),
+          '/settings': (context) => const SettingsScreen(),
         },
       ),
     );

@@ -98,6 +98,9 @@ class AlertConstants {
   /// Minimum time between alerts (prevent alert fatigue)
   static const int alertCooldownMs = 5000;
   
+  /// Duration of alert display (ms)
+  static const int alertDurationMs = 10000;
+  
   /// Confidence threshold for triggering alerts
   static const double alertConfidenceThreshold = 0.7;
   

@@ -13,10 +13,6 @@ import '../../data/services/tflite_service.dart';
 import '../../domain/repositories/drowsiness_repository.dart';
 import '../../domain/repositories/settings_repository.dart';
 import '../../domain/usecases/analyze_frame_usecase.dart';
-import '../../domain/usecases/calculate_fatigue_score_usecase.dart';
-import '../../domain/usecases/manage_alerts_usecase.dart';
-import '../../presentation/bloc/drowsiness/drowsiness_bloc.dart';
-import '../../presentation/bloc/settings/settings_bloc.dart';
 import '../utils/performance_utils.dart';
 
 final getIt = GetIt.instance;
@@ -51,14 +47,10 @@ Future<void> configureDependencies() async {
   // ===== Services =====
   
   // TensorFlow Lite service for model inference
-  final tfliteService = TFLiteService();
-  await tfliteService.initialize();
-  getIt.registerSingleton<TFLiteService>(tfliteService);
+  getIt.registerLazySingleton<TFLiteService>(() => TFLiteService());
   
   // Alert service for audio/haptic feedback
-  final alertService = AlertService();
-  await alertService.initialize();
-  getIt.registerSingleton<AlertService>(alertService);
+  getIt.registerLazySingleton<AlertService>(() => AlertService());
   
   // ===== Repositories =====
   
@@ -82,39 +74,15 @@ Future<void> configureDependencies() async {
       repository: getIt(),
     ),
   );
-  
-  getIt.registerLazySingleton<CalculateFatigueScoreUseCase>(
-    () => CalculateFatigueScoreUseCase(),
-  );
-  
-  getIt.registerLazySingleton<ManageAlertsUseCase>(
-    () => ManageAlertsUseCase(
-      alertService: getIt(),
-    ),
-  );
-  
-  // ===== BLoCs =====
-  
-  getIt.registerFactory<DrowsinessBloc>(
-    () => DrowsinessBloc(
-      analyzeFrameUseCase: getIt(),
-      calculateFatigueScoreUseCase: getIt(),
-      manageAlertsUseCase: getIt(),
-      frameRateController: getIt(),
-      inferenceTimer: getIt(),
-    ),
-  );
-  
-  getIt.registerFactory<SettingsBloc>(
-    () => SettingsBloc(
-      repository: getIt(),
-    ),
-  );
 }
 
 /// Dispose all services that need cleanup
 Future<void> disposeDependencies() async {
-  await getIt<TFLiteService>().dispose();
-  await getIt<AlertService>().dispose();
+  if (getIt.isRegistered<TFLiteService>()) {
+    await getIt<TFLiteService>().dispose();
+  }
+  if (getIt.isRegistered<AlertService>()) {
+    await getIt<AlertService>().dispose();
+  }
   await getIt.reset();
 }
