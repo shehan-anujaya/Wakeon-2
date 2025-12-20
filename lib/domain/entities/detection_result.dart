@@ -112,7 +112,7 @@ class DrowsinessResult {
   /// Create initial/default result
   factory DrowsinessResult.initial() {
     return DrowsinessResult(
-      level: DrowsinessLevel.alert,
+      level: DrowsinessLevel.normal,
       fatigueScore: 0.0,
       confidence: 0.0,
       currentEAR: 0.30,
@@ -127,7 +127,7 @@ class DrowsinessResult {
   
   /// Check if alert should be triggered
   bool get shouldAlert => 
-    level != DrowsinessLevel.alert && confidence >= 0.7;
+    level != DrowsinessLevel.normal && confidence >= 0.7;
   
   @override
   String toString() => 
@@ -138,16 +138,10 @@ class DrowsinessResult {
 /// Drowsiness severity levels
 enum DrowsinessLevel {
   /// Driver is alert and responsive
-  alert,
+  normal,
   
-  /// Early signs of fatigue detected
-  mild,
-  
-  /// Moderate drowsiness, caution advised
-  moderate,
-  
-  /// Severe drowsiness, immediate action needed
-  severe,
+  /// Moderate drowsiness, warning advised
+  warning,
   
   /// Critical state, potential microsleep
   critical,
@@ -158,31 +152,24 @@ enum RecommendedAction {
   /// No action needed, driver is alert
   none,
   
-  /// Take a short break soon
-  takeBreakSoon,
+  /// Stay alert and focused
+  stayAlert,
   
-  /// Pull over for a break
-  pullOverNow,
+  /// Take a break now
+  takeBrakeNow,
   
-  /// Switch drivers if possible
-  switchDriver,
-  
-  /// Immediate stop required
-  emergencyStop,
+  /// Pull over immediately - dangerous
+  pullOverImmediately,
 }
 
 extension DrowsinessLevelExtension on DrowsinessLevel {
   /// Get display text
   String get displayText {
     switch (this) {
-      case DrowsinessLevel.alert:
+      case DrowsinessLevel.normal:
         return 'Alert';
-      case DrowsinessLevel.mild:
-        return 'Mild Fatigue';
-      case DrowsinessLevel.moderate:
-        return 'Moderate Fatigue';
-      case DrowsinessLevel.severe:
-        return 'Severe Fatigue';
+      case DrowsinessLevel.warning:
+        return 'Warning';
       case DrowsinessLevel.critical:
         return 'CRITICAL';
     }
@@ -191,14 +178,10 @@ extension DrowsinessLevelExtension on DrowsinessLevel {
   /// Get color hex code
   int get colorValue {
     switch (this) {
-      case DrowsinessLevel.alert:
+      case DrowsinessLevel.normal:
         return 0xFF66BB6A;  // Green
-      case DrowsinessLevel.mild:
-        return 0xFFFFEB3B;  // Yellow
-      case DrowsinessLevel.moderate:
+      case DrowsinessLevel.warning:
         return 0xFFFFB74D;  // Orange
-      case DrowsinessLevel.severe:
-        return 0xFFFF7043;  // Deep Orange
       case DrowsinessLevel.critical:
         return 0xFFE53935;  // Red
     }
@@ -211,14 +194,12 @@ extension RecommendedActionExtension on RecommendedAction {
     switch (this) {
       case RecommendedAction.none:
         return 'Stay focused';
-      case RecommendedAction.takeBreakSoon:
-        return 'Consider a break';
-      case RecommendedAction.pullOverNow:
-        return 'Pull over safely';
-      case RecommendedAction.switchDriver:
-        return 'Switch drivers';
-      case RecommendedAction.emergencyStop:
-        return 'STOP NOW';
+      case RecommendedAction.stayAlert:
+        return 'Stay alert';
+      case RecommendedAction.takeBrakeNow:
+        return 'Take a break';
+      case RecommendedAction.pullOverImmediately:
+        return 'PULL OVER NOW';
     }
   }
 }

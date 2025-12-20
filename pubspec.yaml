@@ -33,14 +33,14 @@ dependencies:
   
   # Audio & Haptics
   audioplayers: ^5.2.1
-  vibration: ^1.8.4
+  vibration: ^2.0.1
   
   # Utilities
   dartz: ^0.10.1
   freezed_annotation: ^2.4.1
   json_annotation: ^4.8.1
   permission_handler: ^11.1.0
-  wakelock: ^0.6.2
+  wakelock_plus: ^1.2.8
   
   # SMS/Calling for emergency
   url_launcher: ^6.2.2
@@ -67,9 +67,10 @@ flutter:
     - assets/audio/
     - assets/images/
   
-  fonts:
-    - family: Roboto
-      fonts:
-        - asset: assets/fonts/Roboto-Regular.ttf
-        - asset: assets/fonts/Roboto-Bold.ttf
-          weight: 700
+  # Uncomment to use custom fonts (requires font files in assets/fonts/)
+  # fonts:
+  #   - family: Roboto
+  #     fonts:
+  #       - asset: assets/fonts/Roboto-Regular.ttf
+  #       - asset: assets/fonts/Roboto-Bold.ttf
+  #         weight: 700

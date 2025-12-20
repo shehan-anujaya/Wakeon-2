@@ -1,0 +1,90 @@
+# WakeOn Training Configuration
+
+# Dataset paths
+data:
+  raw_path: "data/raw"
+  processed_path: "data/processed"
+  augmented_path: "data/augmented"
+  train_split: 0.8
+  val_split: 0.1
+  test_split: 0.1
+
+# Feature extraction settings
+features:
+  # Eye Aspect Ratio (EAR) settings
+  ear:
+    left_eye_indices: [362, 385, 387, 263, 373, 380]  # MediaPipe indices
+    right_eye_indices: [33, 160, 158, 133, 153, 144]
+    closed_threshold: 0.21
+    normal_value: 0.30
+  
+  # Head pose estimation
+  head_pose:
+    max_yaw: 90.0
+    max_pitch: 90.0
+    max_roll: 90.0
+    nodding_threshold: 15.0
+  
+  # Temporal features
+  temporal:
+    sequence_length: 30  # frames
+    sliding_window: 5
+    fps: 30
+
+# Model architecture
+model:
+  name: "DrowsinessClassifierV2"
+  input_features: 15  # EAR, head pose, derivatives, temporal
+  hidden_units: [64, 32]
+  lstm_units: 32
+  dropout: 0.3
+  num_classes: 3  # alert, drowsy, microsleep
+  activation: "relu"
+  output_activation: "softmax"
+
+# Training settings
+training:
+  epochs: 100
+  batch_size: 32
+  learning_rate: 0.001
+  lr_schedule: "cosine_decay"
+  optimizer: "adam"
+  early_stopping:
+    patience: 10
+    min_delta: 0.001
+  class_weights:
+    alert: 1.0
+    drowsy: 2.0
+    microsleep: 3.0  # Higher weight for rare but critical class
+
+# Data augmentation
+augmentation:
+  enabled: true
+  noise_std: 0.02
+  time_shift_range: 3
+  dropout_rate: 0.1
+  mixup_alpha: 0.2
+
+# TFLite conversion
+tflite:
+  quantization: "int8"  # options: none, float16, int8
+  optimize_for_size: true
+  representative_data_samples: 500
+  output_path: "models/drowsiness_classifier.tflite"
+
+# Evaluation thresholds
+evaluation:
+  fatigue_score:
+    normal: 0.3
+    warning: 0.6
+    critical: 0.8
+  perclos:
+    warning: 0.15
+    critical: 0.25
+  
+# Logging
+logging:
+  tensorboard: true
+  log_dir: "logs"
+  save_best_only: true
+  checkpoint_path: "checkpoints"

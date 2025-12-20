@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:wakelock/wakelock.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 import 'core/di/injection_container.dart';
 import 'core/theme/app_theme.dart';
@@ -35,7 +35,7 @@ void main() async {
   ]);
   
   // Keep screen awake during driving
-  await Wakelock.enable();
+  await WakelockPlus.enable();
   
   // Set system UI overlay style for dark mode
   SystemChrome.setSystemUIOverlayStyle(

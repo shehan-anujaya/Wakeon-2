@@ -5,9 +5,9 @@
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:vibration/vibration.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/constants/app_constants.dart';
-import '../../core/theme/app_theme.dart';
 
 /// Service for managing driver alerts
 class AlertService {
@@ -17,6 +17,7 @@ class AlertService {
   bool _hasVibrator = false;
   int _lastAlertTime = 0;
   AlertLevel _lastAlertLevel = AlertLevel.normal;
+  String? _emergencyContact;
   
   bool get isInitialized => _isInitialized;
   
@@ -35,6 +36,11 @@ class AlertService {
       _isInitialized = false;
       rethrow;
     }
+  }
+  
+  /// Set emergency contact number
+  void setEmergencyContact(String? phoneNumber) {
+    _emergencyContact = phoneNumber;
   }
   
   /// Trigger alert based on level
@@ -64,17 +70,17 @@ class AlertService {
         return false;
         
       case AlertLevel.warning:
-        await _triggerWarningAlert();
+        await triggerWarningAlert();
         return true;
         
       case AlertLevel.critical:
-        await _triggerCriticalAlert();
+        await triggerCriticalAlert();
         return true;
     }
   }
   
-  /// Trigger warning level alert
-  Future<void> _triggerWarningAlert() async {
+  /// Trigger warning level alert (public method for BLoC)
+  Future<void> triggerWarningAlert() async {
     // Haptic feedback
     if (_hasVibrator) {
       await Vibration.vibrate(
@@ -89,8 +95,8 @@ class AlertService {
     );
   }
   
-  /// Trigger critical level alert
-  Future<void> _triggerCriticalAlert() async {
+  /// Trigger critical level alert (public method for BLoC)
+  Future<void> triggerCriticalAlert() async {
     // Strong haptic feedback
     if (_hasVibrator) {
       await Vibration.vibrate(
@@ -105,6 +111,11 @@ class AlertService {
     );
   }
   
+  /// Stop all active alerts (alias for stopAlerts)
+  Future<void> stopAlert() async {
+    await stopAlerts();
+  }
+  
   /// Stop all active alerts
   Future<void> stopAlerts() async {
     await _audioPlayer.stop();
@@ -112,6 +123,19 @@ class AlertService {
       await Vibration.cancel();
     }
     _lastAlertLevel = AlertLevel.normal;
+  }
+  
+  /// Trigger emergency - call/SMS emergency contact
+  Future<void> triggerEmergency() async {
+    if (_emergencyContact == null || _emergencyContact!.isEmpty) {
+      return;
+    }
+    
+    // Attempt to make phone call
+    final phoneUri = Uri.parse('tel:$_emergencyContact');
+    if (await canLaunchUrl(phoneUri)) {
+      await launchUrl(phoneUri);
+    }
   }
   
   /// Play acknowledgment sound when driver confirms alert
@@ -209,4 +233,16 @@ class EmergencyContactService {
   
   /// Get emergency contact number
   String? get emergencyContact => _emergencyContact;
+}
+
+/// Alert severity levels
+enum AlertLevel {
+  /// Normal state, no alert needed
+  normal,
+  
+  /// Warning level - moderate fatigue
+  warning,
+  
+  /// Critical level - severe fatigue/microsleep
+  critical,
 }

@@ -241,6 +241,12 @@ class DrowsinessInferenceResult {
     required this.microsleepProbability,
   });
   
+  /// Get the maximum probability (confidence)
+  double get maxProbability {
+    return [alertProbability, drowsyProbability, microsleepProbability]
+        .reduce((a, b) => a > b ? a : b);
+  }
+  
   /// Get the most likely state
   DrowsinessState get predictedState {
     if (microsleepProbability > drowsyProbability && 

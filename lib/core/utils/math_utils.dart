@@ -88,7 +88,7 @@ class MathUtils {
     }
     
     final noseTip = landmarks[0];
-    final chin = landmarks[1];
+    // chin landmark available at landmarks[1] for future use
     final leftEye = landmarks[2];
     final rightEye = landmarks[3];
     

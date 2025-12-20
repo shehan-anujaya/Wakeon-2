@@ -11,9 +11,12 @@ class AppTheme {
   static const Color primaryColor = Color(0xFF1E88E5);      // Blue - attention
   static const Color warningColor = Color(0xFFFFB74D);       // Amber - warning
   static const Color criticalColor = Color(0xFFE53935);      // Red - critical
+  static const Color dangerColor = Color(0xFFE53935);        // Red - danger (alias)
   static const Color safeColor = Color(0xFF66BB6A);          // Green - safe
   static const Color backgroundColor = Color(0xFF121212);    // Dark background
+  static const Color backgroundDark = Color(0xFF0D0D0D);     // Even darker
   static const Color surfaceColor = Color(0xFF1E1E1E);       // Slightly lighter
+  static const Color surfaceDark = Color(0xFF1A1A1A);        // Surface dark
   static const Color cardColor = Color(0xFF2C2C2C);          // Card surfaces
   static const Color textPrimary = Color(0xFFFFFFFF);        // Primary text
   static const Color textSecondary = Color(0xFFB0B0B0);      // Secondary text
@@ -59,7 +62,7 @@ class AppTheme {
       ),
       
       // Cards
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: cardColor,
         elevation: 0,
         shape: RoundedRectangleBorder(
@@ -220,7 +223,7 @@ class AppTheme {
       ),
       
       // Dialog theme
-      dialogTheme: DialogTheme(
+      dialogTheme: DialogThemeData(
         backgroundColor: surfaceColor,
         elevation: 8,
         shape: RoundedRectangleBorder(
