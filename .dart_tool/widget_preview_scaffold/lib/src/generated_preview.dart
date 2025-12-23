@@ -1,7 +1,6 @@
-// Copyright 2014 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
+// ignore_for_file: implementation_imports
 
-import 'widget_preview.dart';
+// ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'widget_preview.dart' as _i1;
 
-List<WidgetPreview> previews() => <WidgetPreview>[];
+List<_i1.WidgetPreview> previews() => [];
